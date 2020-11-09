@@ -307,7 +307,7 @@
 
       // Bonus Intersects
 
-      if (body[0].intersects(bonus)) {
+      if (body[0].intersects(bonus) && showBonus === true) {
         score += 2;
         showBonus = false;
         bonus.x = random(canvas.width / 10 - 1) * 10;
