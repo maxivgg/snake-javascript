@@ -11,6 +11,7 @@
     lastPress = null,
     pause = false,
     gameover = false,
+    showBonus = false,
     currentScene = 0,
     scenes = [],
     mainScene = null,
@@ -18,6 +19,7 @@
     highscoresScene = null,
     body = [],
     food = null,
+    bonus = null,
     //var wall = [],
     highscores = [],
     posHighscore = 10,
@@ -25,6 +27,7 @@
     score = 0,
     iBody = new Image(),
     iFood = new Image(),
+    iBonus = new Image(),
     aEat = new Audio(),
     aDie = new Audio();
   window.requestAnimationFrame = (function () {
@@ -136,10 +139,12 @@
     // Load assets
     iBody.src = "assets/body.png";
     iFood.src = "assets/fruit.png";
+    iBonus.src = "assets/bannana.png";
     aEat.src = "assets/chomp.oga";
     aDie.src = "assets/dies.oga";
     // Create food
     food = new Rectangle(80, 80, 10, 10);
+    bonus = new Rectangle(80, 80, 10, 10);
     // Create walls
     //wall.push(new Rectangle(50, 50, 10, 10));
     //wall.push(new Rectangle(50, 100, 10, 10));
@@ -184,6 +189,7 @@
     body.push(new Rectangle(0, 0, 10, 10));
     food.x = random(canvas.width / 10 - 1) * 10;
     food.y = random(canvas.height / 10 - 1) * 10;
+
     gameover = false;
   };
   gameScene.paint = function (ctx) {
@@ -206,6 +212,11 @@
 
     ctx.strokeStyle = "#f00";
     food.drawImage(ctx, iFood);
+    if (showBonus) {
+      bonus.drawImage(ctx, iBonus);
+    }
+
+
     // Draw score
     ctx.fillStyle = "#fff";
     ctx.textAlign = "left";
@@ -274,6 +285,7 @@
       if (body[0].y < 0) {
         body[0].y = canvas.height - body[0].height;
       }
+
       // Food Intersects
       if (body[0].intersects(food)) {
         body.push(new Rectangle(0, 0, 10, 10));
@@ -281,7 +293,40 @@
         food.x = random(canvas.width / 10 - 1) * 10;
         food.y = random(canvas.height / 10 - 1) * 10;
         aEat.play();
+        bonus.x = random(canvas.width / 10 - 1) * 10;
+        bonus.y = random(canvas.height / 10 - 1) * 10;
+
+        if(random(100) < 20){
+          showBonus = true;
+    
+        } else {
+          showBonus = false;
+
+        }
       }
+
+      // Bonus Intersects
+
+      if (body[0].intersects(bonus)) {
+        score += 2;
+        showBonus = false;
+        bonus.x = random(canvas.width / 10 - 1) * 10;
+        bonus.y = random(canvas.height / 10 - 1) * 10;
+
+        fetch("https://jsonplaceholder.typicode.com/?score="+score)
+          .then(function (response) {
+            console.log("Score sent successfully");
+          })
+          .catch(function (error) {
+            console.log(
+              "Error trying to send the score"
+            );
+          });
+
+          aEat.play();
+  
+        }
+      
       // Wall Intersects
       //for (i = 0, l = wall.length; i < l; i += 1) {
       // if (food.intersects(wall[i])) {
