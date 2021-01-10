@@ -1,2 +1,2 @@
 # Snake in Javascript
-https://maxivgg.github.io/snake-javascript/
+This site is published at https://maxivgg.github.io/snake-javascript/
